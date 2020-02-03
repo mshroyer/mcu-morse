@@ -244,6 +244,10 @@ void morse_in(int key_state, unsigned long now) {
     return;
   }
 
+#ifndef ENABLE_INPUT
+  digitalWrite(LED_PIN, key_state ? HIGH : LOW);
+#endif  /* !defined ENABLE_INPUT */
+
   if (!key_state && recv_i < BUF_SZ) {
     len = now - last_key_millis;
     char ch = classify_interval(len);
