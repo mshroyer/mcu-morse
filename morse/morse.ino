@@ -26,6 +26,8 @@
 // Output centroid debugging info over serial.
 //#define ENABLE_DEBUG_CENTROIDS 1
 
+typedef unsigned long duration_t;
+
 #define ENC_SZ 5
 #define KEY_PIN 12
 #define LED_PIN 13
@@ -85,15 +87,15 @@ int recv_i = 0;
 char buf_recv[BUF_SZ];
 
 // The last keying state and timestamp, set by morse_in.
-unsigned long last_key_millis;
+duration_t last_key_millis;
 boolean last_key_state = false;
 
 // Ring buffer of interval lengths for computing centroids.
-unsigned long buf_int[BUF_INT_SZ];
+duration_t buf_int[BUF_INT_SZ];
 int buf_int_i = 0;
-unsigned long centroid[2] = { 100, 300 };
+duration_t centroid[2] = { 100, 300 };
 
-static unsigned long distance(unsigned long a, unsigned long b) {
+static duration_t distance(duration_t a, duration_t b) {
   if (a > b) {
     return a - b;
   } else {
@@ -101,7 +103,7 @@ static unsigned long distance(unsigned long a, unsigned long b) {
   }
 }
 
-int get_centroid(unsigned long len) {
+int get_centroid(duration_t len) {
   if (distance(len, centroid[1]) < distance(len, centroid[0])) {
     return 1;
   } else {
@@ -109,7 +111,7 @@ int get_centroid(unsigned long len) {
   }
 }
 
-char classify_interval(unsigned long len) {
+char classify_interval(duration_t len) {
   if (get_centroid(len) == 0) {
     return '.';
   } else {
@@ -117,8 +119,8 @@ char classify_interval(unsigned long len) {
   }
 }
 
-void update_centroids(unsigned long len) {
-  unsigned long centroid_sums[2] = { 0, 0 };
+void update_centroids(duration_t len) {
+  duration_t centroid_sums[2] = { 0, 0 };
   int centroid_matches[2] = { 0, 0 };
   int i, j, k;
 
@@ -166,7 +168,7 @@ void update_centroids(unsigned long len) {
 }
 
 void normalize_centroids() {
-  unsigned long tmp;
+  duration_t tmp;
 
   if (centroid[0] > centroid[1]) {
     tmp = centroid[0];
@@ -231,8 +233,8 @@ void morse_out(const char *enc) {
 
 #endif  /* defined ENABLE_INPUT */
 
-void morse_in(int key_state, unsigned long now) {
-  unsigned long len;
+void morse_in(int key_state, duration_t now) {
+  duration_t len;
 
   // Input is unchanged, nothing to do here.
   if (key_state == last_key_state) {
@@ -285,7 +287,7 @@ void setup() {
 }
 
 void loop() {
-  unsigned long now = millis();
+  duration_t now = millis();
   boolean key_state = !digitalRead(KEY_PIN);
   char ch;
 
