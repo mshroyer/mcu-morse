@@ -38,7 +38,7 @@ typedef unsigned long duration_t;
 #define MORSE_CHAR(ch, enc) ch enc
 #define DIT centroid[0]
 #define DAH centroid[1]
-#define SPACE (centroid[1] - centroid[1] / 10)
+#define SPACE (centroid[1] - centroid[1] / 5)
 
 #ifdef ENABLE_KEYBOARD_OUTPUT
 #include <Keyboard.h>
