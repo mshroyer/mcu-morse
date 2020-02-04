@@ -38,6 +38,7 @@ typedef unsigned long duration_t;
 #define MORSE_CHAR(ch, enc) ch enc
 #define DIT centroid[0]
 #define DAH centroid[1]
+#define SPACE (centroid[1] - centroid[1] / 10)
 
 #ifdef ENABLE_KEYBOARD_OUTPUT
 #include <Keyboard.h>
@@ -225,7 +226,7 @@ void morse_out(const char *enc) {
         break;
 
       default:
-        delay(DAH);
+        delay(SPACE);
         return;
     }
   }
@@ -292,7 +293,7 @@ void loop() {
   char ch;
 
   morse_in(key_state, now);
-  if (!last_key_state && recv_i != 0 && now - last_key_millis >= DAH) {
+  if (!last_key_state && recv_i != 0 && now - last_key_millis >= SPACE) {
     buf_recv[recv_i] = '\0';
     ch = morse_decode_char(buf_recv);
     if (ch) {
